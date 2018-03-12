@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express();
+const routes = require('./routes')
 
 const morgan = require('morgan')
 app.use(morgan('dev'))
@@ -18,4 +19,15 @@ app.get('/', function (req, res, next){
     res.render('index')
 })
 
-app.listen(3000, console.log('Listening on Port 3000'))
+app.use('/', routes);
+
+const models = require('./models')
+
+models.db.sync({force: true})
+.then(function () {
+    console.log('All tables created!');
+    app.listen(3000, function () {
+        console.log('Server is listening on port 3000!');
+    });
+})
+.catch(console.error.bind(console));
