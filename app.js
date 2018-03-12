@@ -6,6 +6,7 @@ const morgan = require('morgan')
 app.use(morgan('dev'))
 
 const bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json())
 
 const nunjucks = require('nunjucks')
@@ -23,7 +24,7 @@ app.use('/', routes);
 
 const models = require('./models')
 
-models.db.sync({force: true})
+models.db.sync()
 .then(function () {
     console.log('All tables created!');
     app.listen(3000, function () {

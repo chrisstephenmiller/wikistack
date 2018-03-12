@@ -11,7 +11,6 @@ const Page = db.define('page', {
     urlTitle: {
         type: Sequelize.STRING,
         allowNull: false,
-        validate: { isUrl: true }
     },
     content: {
         type: Sequelize.TEXT,
@@ -25,13 +24,21 @@ const Page = db.define('page', {
         defaultValue: Sequelize.NOW
     }
 }, {
+        hooks: {
+            beforeValidate: function generateUrlTitle(page) {
+                if (page.title) {
+                    page.urlTitle = page.title.replace(/\s+/g, '_').replace(/\W/g, '');
+                } else {
+                    page.urlTitle = Math.random().toString(36).substring(2, 7);
+                }
+            }
+        },
         getterMethods: {
             route() {
                 return `/wiki/${this.urlTitle}`
             }
         }
-    }
-)
+    })
 
 const User = db.define('user', {
     name: {
