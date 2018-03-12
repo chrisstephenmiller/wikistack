@@ -11,26 +11,35 @@ router.get('/', (req, res, next) => {
 
     })
         .then((foundPages) => {
-            let pages = {}
-            console.log(foundPages[0].dataValues.title)
-            for (title in foundPages) {
-                pages[title] = foundPages[title].dataValues.title;
-            }
-            console.log({pages: foundPages})
-            res.render('index', {pages: foundPages});
+            res.render('index', { pages: foundPages });
         })
 })
 
 router.post('/', (req, res, next) => {
-    const page = Page.build({
-        title: req.body.title,
-        content: req.body.textarea,
-    })
 
-    page.save()
-        .then(function (savedPage) {
-            res.redirect(savedPage.route)
-        }).catch(next)
+    User.findOrCreate({
+        where: {
+            name: req.body.authorname,
+            email: req.body.authoremail
+        }
+    })
+        .then(foundAuthor => {
+            const author = foundAuthor[0];
+
+            const page = Page.build({
+                title: req.body.title,
+                content: req.body.textarea,
+            })
+
+            return page.save()
+                .then(function (savedPage) {
+                    return page.setAuthor(author);
+                })
+        })
+        .then(function (page) {
+            res.redirect(page.route)
+        })
+
 })
 
 router.get('/add', (req, res, next) => {
@@ -44,8 +53,7 @@ router.get('/:urlTitle', (req, res, next) => {
         }
     })
         .then((foundPage) => {
-            const locals = foundPage.dataValues;
-            res.render('wikipage', locals);
+            res.render('wikipage', { pages: foundPage });
         })
         .catch(next)
 })

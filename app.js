@@ -24,7 +24,7 @@ app.use('/', routes);
 
 const models = require('./models')
 
-models.db.sync()
+models.db.sync({ force: false })
 .then(function () {
     console.log('All tables created!');
     app.listen(3000, function () {
