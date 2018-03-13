@@ -19,10 +19,13 @@ const Page = db.define('page', {
     status: {
         type: Sequelize.ENUM('open', 'closed')
     },
+    tags: {
+        type: Sequelize.ARRAY(Sequelize.TEXT),
+    },
     date: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW
-    }
+    },
 }, {
         hooks: {
             beforeValidate: function generateUrlTitle(page) {

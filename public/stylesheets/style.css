@@ -1,8 +1,17 @@
 body {
-    padding: 50px;
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    margin-top: 60px;
   }
   
   a {
     color: #00B7FF;
+  }
+
+  .form-group {
+    padding: 12px;
+  }
+
+  .submit-button {
+    margin-left: 164px;
+    margin-top: 18px;
   }

@@ -1,13 +1,13 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h3>Pages</h3>
+<h3>Users</h3>
 <hr>
 <ul class="list-unstyled">
   <ul>
-    {% for page in pages %}
+    {% for user in users %}
     <li>
-      <a href="/wiki/{{page.urlTitle}}">{{page.title}}</a>
+      <a href="/users/{{ user.id }}">{{ user.name }}</a>
     </li>
     {% endfor %}
   </ul>

@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express();
 const routes = require('./routes')
+const models = require('./models')
 
 const morgan = require('morgan')
 app.use(morgan('dev'))
@@ -14,15 +15,11 @@ const env = nunjucks.configure('views', { noCache: true });
 app.set('view engine', 'html');
 app.engine('html', nunjucks.render);
 
-express.static('./public');
+const path = require('path');
 
-app.get('/', function (req, res, next){
-    res.render('index')
-})
+app.use(express.static(path.join(__dirname, '/public')));
 
 app.use('/', routes);
-
-const models = require('./models')
 
 models.db.sync({ force: false })
 .then(function () {

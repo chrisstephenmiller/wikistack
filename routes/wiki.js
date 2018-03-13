@@ -7,15 +7,15 @@ const User = models.User;
 module.exports = router;
 
 router.get('/', (req, res, next) => {
-    Page.findAll({
-
-    })
-        .then((foundPages) => {
-            res.render('index', { pages: foundPages });
+    Page.findAll()
+        .then((pages) => {
+            res.render('index', { pages });
         })
 })
 
 router.post('/', (req, res, next) => {
+
+    const tagsArr = req.body.tags.split(/\s*\,\s+|\,\s+|\s*\,|\s+|\,/g)
 
     User.findOrCreate({
         where: {
@@ -25,14 +25,15 @@ router.post('/', (req, res, next) => {
     })
         .then(foundAuthor => {
             const author = foundAuthor[0];
-
+            console.log(req.body)
             const page = Page.build({
                 title: req.body.title,
-                content: req.body.textarea,
+                content: req.body.content,
+                tags: tagsArr
             })
 
             return page.save()
-                .then(function (savedPage) {
+                .then(function () {
                     return page.setAuthor(author);
                 })
         })
@@ -47,13 +48,24 @@ router.get('/add', (req, res, next) => {
 })
 
 router.get('/:urlTitle', (req, res, next) => {
+
     Page.findOne({
         where: {
             urlTitle: req.params.urlTitle
-        }
+        },
+        include: [
+            { model: User, as: 'author' }
+        ]
     })
-        .then((foundPage) => {
-            res.render('wikipage', { pages: foundPage });
+        .then(function (page) {
+            if (page === null) {
+                res.sendStatus(404);
+            } else {
+                const user = page.author
+                console.log(page)
+                res.render('wikipage', { page, user });
+            }
         })
-        .catch(next)
+        .catch(next);
+
 })
